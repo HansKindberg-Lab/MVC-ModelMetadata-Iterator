@@ -2,6 +2,7 @@
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using WebApplication.Business.Web.Mvc;
 
 namespace WebApplication
 {
@@ -11,6 +12,8 @@ namespace WebApplication
 
 		protected void Application_Start(object sender, EventArgs e)
 		{
+			ModelMetadataProviders.Current = new ExtendedCachedDataAnnotationsModelMetadataProvider();
+
 			AreaRegistration.RegisterAllAreas();
 
 			this.RegisterRoutes(RouteTable.Routes);

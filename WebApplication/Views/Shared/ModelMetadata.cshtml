@@ -1,5 +1,5 @@
-﻿@model ModelMetadata
-@helper RenderModelMetadata(ModelMetadata modelMetadata, int level)
+﻿@model IModelMetadata
+@helper RenderModelMetadata(IModelMetadata modelMetadata, int level)
 {
 	<ul>
 		<li>
@@ -42,6 +42,9 @@
 				</li>
 				<li>
 					<strong>GetDisplayName(): </strong>@modelMetadata.GetDisplayName()
+				</li>
+				<li>
+					<strong>GroupName: </strong>@modelMetadata.GroupName
 				</li>
 				<li>
 					<strong>HideSurroundingHtml: </strong>@modelMetadata.HideSurroundingHtml

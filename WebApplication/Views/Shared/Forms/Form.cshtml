@@ -1,2 +1,40 @@
 ﻿@model Form
-@Html.Partial("~/Views/Shared/ModelMetadata.cshtml", ViewData.ModelMetadata)
+<div style="min-width: 200px;">
+	<div style="float: left; width: 30%;">
+		<h2>ExtendedEditorFor</h2>
+		@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+		{
+			@Html.AntiForgeryToken()
+			@Html.ExtendedEditorFor(model => model)
+			<div>
+				<button type="submit">Save</button>
+			</div>
+		}
+		@*
+		<h2>EditorFor (built-in)</h2>
+		@using(Html.BeginForm("Index", "Home", FormMethod.Post))
+		{
+			@Html.AntiForgeryToken()
+			@Html.EditorFor(model => model)
+			<div>
+				<button type="submit">Save</button>
+			</div>
+		}
+		*@
+	</div>
+	<div style="float: left; width: 30%;">
+		<h2>CreateFormFields</h2>
+		@using(Html.BeginForm("Index", "Home", FormMethod.Post))
+		{
+			@Html.AntiForgeryToken()
+			@* @Html.CreateFormComponents() *@
+			<div>
+				<button type="submit">Save</button>
+			</div>
+		}
+	</div>
+	<div style="float: left; width: 40%;">
+		<h2>ModelMetadata</h2>
+		@Html.Partial("~/Views/Shared/ModelMetadata.cshtml", (IModelMetadata) ViewData.ModelMetadata)
+	</div>
+</div>

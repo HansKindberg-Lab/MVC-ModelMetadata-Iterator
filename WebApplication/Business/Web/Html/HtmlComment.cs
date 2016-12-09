@@ -2,25 +2,19 @@
 
 namespace WebApplication.Business.Web.Html
 {
-	public class HtmlComment : IHtmlComponent
+	public class HtmlComment : BasicHtmlNode
 	{
 		#region Properties
 
-		public virtual IHtmlContainer Parent { get; set; }
 		public virtual string Value { get; set; }
 
 		#endregion
 
 		#region Methods
 
-		public virtual IHtmlString ToHtmlString()
+		public override IHtmlString ToHtmlString(int indentLevel)
 		{
-			return new HtmlString(this.Value ?? string.Empty);
-		}
-
-		public override string ToString()
-		{
-			return this.ToHtmlString().ToHtmlString();
+			return new HtmlString(this.GetTabs(indentLevel) + this.Value);
 		}
 
 		#endregion

@@ -2,11 +2,11 @@
 
 namespace WebApplication.Business.Web.Html
 {
-	public interface IHtmlContainer : IHtmlComponent
+	public interface IHtmlContainer : IHtmlNode
 	{
 		#region Properties
 
-		IList<IHtmlComponent> Children { get; }
+		IList<IHtmlNode> Children { get; }
 
 		#endregion
 	}

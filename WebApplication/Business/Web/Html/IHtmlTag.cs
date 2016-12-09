@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Web;
-using System.Web.Mvc;
 using System.Web.UI;
 
 namespace WebApplication.Business.Web.Html
@@ -9,21 +8,23 @@ namespace WebApplication.Business.Web.Html
 	{
 		#region Properties
 
-		IDictionary<string, string> Attributes { get; }
+		IDictionary<string, object> Attributes { get; }
+		HtmlTextWriterTag Tag { get; }
 		string TagName { get; }
-		HtmlTextWriterTag TagType { get; }
 
 		#endregion
 
 		#region Methods
 
+		void AddAttributeIfNotExist(string key, object value);
+		void AddAttributesIfNotExist<TKey, TValue>(IDictionary<TKey, TValue> attributes);
 		void AddClass(string value);
-		void MergeAttribute(string key, string value);
-		void MergeAttribute(string key, string value, bool replaceExisting);
-		void MergeAttributes<TKey, TValue>(IDictionary<TKey, TValue> attributes);
-		void MergeAttributes<TKey, TValue>(IDictionary<TKey, TValue> attributes, bool replaceExisting);
+		void SetAttribute(string key, object value);
+		void SetAttributes<TKey, TValue>(IDictionary<TKey, TValue> attributes);
+		void SetId(string id);
+		void SetIdIfNotExist(string id);
 		IHtmlString ToHtmlString(TagRenderMode renderMode);
-		string ToString(TagRenderMode renderMode);
+		IHtmlString ToHtmlString(TagRenderMode renderMode, int indentLevel);
 
 		#endregion
 	}

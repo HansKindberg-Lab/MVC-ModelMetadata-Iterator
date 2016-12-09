@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-
-namespace WebApplication.Business.Web.Html
+﻿namespace WebApplication.Business.Web.Html
 {
 	public interface IHtmlIdFactory
 	{
 		#region Methods
 
-		string Create(IEnumerable<string> parts);
+		string Create(string value);
 
 		#endregion
 	}

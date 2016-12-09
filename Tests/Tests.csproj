@@ -95,8 +95,7 @@
       <Link>CodeAnalysis\SolutionSuppressions.cs</Link>
     </Compile>
     <Compile Include="Business\Web\Html\HtmlIdFactoryTest.cs" />
-    <Compile Include="Business\Web\Mvc\Forms\FormComponentTest.cs" />
-    <Compile Include="Business\Web\Mvc\Html\HtmlParserTest.cs" />
+    <Compile Include="Business\Web\Html\HtmlParserTest.cs" />
     <Compile Include="CodeAnalysis\AssemblySuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -107,6 +106,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

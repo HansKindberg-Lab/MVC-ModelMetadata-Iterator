@@ -3,7 +3,7 @@ using System.Web;
 
 namespace WebApplication.Business.Web.Html
 {
-	public class HtmlText : IHtmlComponent
+	public class HtmlText : BasicHtmlNode
 	{
 		#region Fields
 
@@ -41,23 +41,17 @@ namespace WebApplication.Business.Web.Html
 		}
 
 		protected internal virtual IHttpEncoder HttpEncoder { get; }
-		public virtual IHtmlContainer Parent { get; set; }
 		public virtual string Value { get; set; }
 
 		#endregion
 
 		#region Methods
 
-		public virtual IHtmlString ToHtmlString()
+		public override IHtmlString ToHtmlString(int indentLevel)
 		{
 			var value = this.Value ?? string.Empty;
 
-			return new HtmlString(this.Encode ? this.HttpEncoder.HtmlEncode(value) : value);
-		}
-
-		public override string ToString()
-		{
-			return this.ToHtmlString().ToHtmlString();
+			return new HtmlString(this.GetTabs(indentLevel) + (this.Encode ? this.HttpEncoder.HtmlEncode(value) : value));
 		}
 
 		#endregion

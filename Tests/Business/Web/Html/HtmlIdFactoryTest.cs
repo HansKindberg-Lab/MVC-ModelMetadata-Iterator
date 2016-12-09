@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebApplication.Business.Web.Html;
-using WebApplication.Business.Web.Html.Extensions;
 
 namespace Tests.Business.Web.Html
 {
@@ -12,14 +11,6 @@ namespace Tests.Business.Web.Html
 
 		[TestMethod]
 		public void CreateTest()
-		{
-			Assert.AreEqual("access-violation-exception", new HtmlIdFactory().Create(typeof(AccessViolationException).Name));
-
-			Assert.AreEqual("access-violation-exception-test-property-name", new HtmlIdFactory().Create(typeof(AccessViolationException).Name, "TestPropertyName"));
-		}
-
-		[TestMethod]
-		public void SeparateOnUppercaseLettersTest()
 		{
 			Assert.AreEqual("access-violation-exception", new HtmlIdFactory().SeparateOnUppercaseLetters(typeof(AccessViolationException).Name));
 

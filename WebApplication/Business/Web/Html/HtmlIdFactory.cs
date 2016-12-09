@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace WebApplication.Business.Web.Html
@@ -9,26 +7,21 @@ namespace WebApplication.Business.Web.Html
 	{
 		#region Fields
 
-		private const char _idPartSeparator = '-';
+		private const char _uppercaseLettersSeparator = '-';
 
 		#endregion
 
 		#region Properties
 
-		protected internal virtual char IdPartSeparator => _idPartSeparator;
+		protected internal virtual char UppercaseLettersSeparator => _uppercaseLettersSeparator;
 
 		#endregion
 
 		#region Methods
 
-		public virtual string Create(IEnumerable<string> parts)
+		public virtual string Create(string value)
 		{
-			if(parts == null)
-				throw new ArgumentNullException(nameof(parts));
-
-			return this.SeparateOnUppercaseLetters(string.Join(string.Empty, parts));
-
-			//return string.Join(this.IdPartSeparator.ToString(), parts.Select(this.CreateIdPart).Where(part => !string.IsNullOrEmpty(part)));
+			return this.SeparateOnUppercaseLetters(value);
 		}
 
 		[SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")]
@@ -41,8 +34,8 @@ namespace WebApplication.Business.Web.Html
 
 			foreach(var character in value)
 			{
-				if(char.IsUpper(character) && !string.IsNullOrEmpty(separatedValue) && separatedValue.Last() != this.IdPartSeparator)
-					separatedValue += this.IdPartSeparator.ToString();
+				if(char.IsUpper(character) && !string.IsNullOrEmpty(separatedValue) && separatedValue.Last() != this.UppercaseLettersSeparator)
+					separatedValue += this.UppercaseLettersSeparator.ToString();
 
 				separatedValue += character;
 			}
@@ -51,23 +44,5 @@ namespace WebApplication.Business.Web.Html
 		}
 
 		#endregion
-
-		/*
-		[SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")]
-		protected internal virtual string CreateIdPart(string name)
-		{
-			var id = string.Empty;
-
-			foreach (var character in name ?? string.Empty)
-			{
-				if (char.IsUpper(character) && !string.IsNullOrEmpty(id))
-					id += this.IdPartSeparator.ToString();
-
-				id += character;
-			}
-
-			return id.ToLowerInvariant();
-		}
-		*/
 	}
 }

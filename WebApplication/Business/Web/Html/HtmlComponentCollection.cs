@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace WebApplication.Business.Web.Html
 {
-	public class HtmlComponentCollection<T> : IList<T> where T : IHtmlComponent
+	public class HtmlComponentCollection<T> : IList<T> where T : IHtmlNode
 	{
 		#region Constructors
 
@@ -32,9 +33,11 @@ namespace WebApplication.Business.Web.Html
 				if(value == null)
 					throw new ArgumentNullException(nameof(value));
 
+				var htmlChild = this.CastToHtmlChild(value);
+
 				this.InternalList[index] = value;
 
-				value.Parent = this.Parent;
+				htmlChild.ParentInternal = this.Parent;
 			}
 		}
 
@@ -49,9 +52,26 @@ namespace WebApplication.Business.Web.Html
 			if(item == null)
 				throw new ArgumentNullException(nameof(item));
 
+			var htmlChild = this.CastToHtmlChild(item);
+
 			this.InternalList.Add(item);
 
-			item.Parent = this.Parent;
+			htmlChild.ParentInternal = this.Parent;
+		}
+
+		protected internal virtual IHtmlChild CastToHtmlChild(T htmlNode)
+		{
+			if(htmlNode == null)
+				throw new ArgumentNullException(nameof(htmlNode));
+
+			try
+			{
+				return (IHtmlChild) htmlNode;
+			}
+			catch(Exception exception)
+			{
+				throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "The html-node of type \"{0}\" must implement \"{1}\".", typeof(T), typeof(IHtmlChild)), exception);
+			}
 		}
 
 		public virtual void Clear()
@@ -89,17 +109,21 @@ namespace WebApplication.Business.Web.Html
 			if(item == null)
 				throw new ArgumentNullException(nameof(item));
 
+			var htmlChild = this.CastToHtmlChild(item);
+
 			this.InternalList.Insert(index, item);
 
-			item.Parent = this.Parent;
+			htmlChild.ParentInternal = this.Parent;
 		}
 
 		public virtual bool Remove(T item)
 		{
+			var htmlChild = this.CastToHtmlChild(item);
+
 			var removed = this.InternalList.Remove(item);
 
 			if(removed)
-				item.Parent = null;
+				htmlChild.ParentInternal = null;
 
 			return removed;
 		}
@@ -108,9 +132,11 @@ namespace WebApplication.Business.Web.Html
 		{
 			var item = this[index];
 
+			var htmlChild = this.CastToHtmlChild(item);
+
 			this.InternalList.RemoveAt(index);
 
-			item.Parent = null;
+			htmlChild.ParentInternal = null;
 		}
 
 		#endregion

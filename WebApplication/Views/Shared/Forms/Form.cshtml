@@ -1,40 +1,68 @@
-﻿@model Form
-<div style="min-width: 200px;">
-	<div style="float: left; width: 30%;">
-		<h2>ExtendedEditorFor</h2>
-		@using (Html.BeginForm("Index", "Home", FormMethod.Post))
-		{
-			@Html.AntiForgeryToken()
-			@Html.ExtendedEditorFor(model => model)
-			<div>
-				<button type="submit">Save</button>
-			</div>
-		}
-		@*
-		<h2>EditorFor (built-in)</h2>
-		@using(Html.BeginForm("Index", "Home", FormMethod.Post))
-		{
-			@Html.AntiForgeryToken()
-			@Html.EditorFor(model => model)
-			<div>
-				<button type="submit">Save</button>
-			</div>
-		}
-		*@
+﻿@model IFormViewModel
+@Html.Partial("~/Views/Shared/SystemInformation.cshtml", Model.SystemInformation, new ViewDataDictionary())
+<form id="form" action="/#form" method="post">
+	@Html.AntiForgeryToken()
+	<div>
+		<button type="submit">Save</button>
 	</div>
-	<div style="float: left; width: 30%;">
-		<h2>CreateFormFields</h2>
-		@using(Html.BeginForm("Index", "Home", FormMethod.Post))
-		{
-			@Html.AntiForgeryToken()
-			@* @Html.CreateFormComponents() *@
-			<div>
-				<button type="submit">Save</button>
-			</div>
-		}
+</form>
+@*
+	<form>
+		<div class="form-group">
+			<label for="exampleInputEmail1">Ditt för- och efternamn</label>
+			<input type="email" class="form-control" id="exampleInputEmail1" placeholder="">
+		</div>
+		<div class="form-group">
+			<label for="exampleInputPassword1">Telefonnummer, dagtid / mobilnummer</label>
+			<input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+		</div>
+		<div class="form-group">
+			<label for="exampleInputEmail1">Adress</label>
+			<input type="email" class="form-control" id="exampleInputEmail1" placeholder="">
+		</div>
+		<div class="form-group">
+			<label for="exampleInputPassword1">Postnummer</label>
+			<input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+		</div>
+		<div class="form-group">
+			<label for="exampleInputPassword1">Orst</label>
+			<input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+		</div>
+		<div class="checkbox">
+			<label>
+				<input type="checkbox"> Jag vill boka tid för undersökning för att teckna ett Frisktandvårdsavtal
+			</label>
+			<label>
+				<input type="checkbox"> Jag vill ställa en fråga om Frisktandvård
+			</label>
+		</div>
+		<button type="submit" class="btn btn-default">Skicka</button>
+	</form>
+*@
+
+@*
+	<form name="" action="/#wpcf7-f5-o1" method="post" class="wpcf7-form" novalidate="novalidate">
+	<div style="display: none;">
+	<input type="hidden" name="_wpcf7" value="5">
+	<input type="hidden" name="_wpcf7_version" value="4.1.1">
+	<input type="hidden" name="_wpcf7_locale" value="sv_SE">
+	<input type="hidden" name="_wpcf7_unit_tag" value="wpcf7-f5-o1">
+	<input type="hidden" name="_wpnonce" value="b499cf20e5">
 	</div>
-	<div style="float: left; width: 40%;">
-		<h2>ModelMetadata</h2>
-		@Html.Partial("~/Views/Shared/ModelMetadata.cshtml", (IModelMetadata) ViewData.ModelMetadata)
-	</div>
-</div>
+	<p>Ditt för- och efternamn<br>
+		<span class="wpcf7-form-control-wrap name"><input type="text" name="name" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false"></span> </p>
+	<p>Telefonnummer, dagtid / mobilnummer<br>
+		<span class="wpcf7-form-control-wrap telephone"><input type="tel" name="telephone" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-tel wpcf7-validates-as-required wpcf7-validates-as-tel" aria-required="true" aria-invalid="false"></span> </p>
+	<p>Adress<br>
+		<span class="wpcf7-form-control-wrap address"><input type="text" name="address" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false"></span> </p>
+	<p>Postnummer<br>
+		<span class="wpcf7-form-control-wrap zip"><input type="text" name="zip" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false"></span> </p>
+	<p>Ort<br>
+		<span class="wpcf7-form-control-wrap city"><input type="text" name="city" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false"></span> </p>
+	<p>
+	   <span class="wpcf7-form-control-wrap subject"><span class="wpcf7-form-control wpcf7-checkbox wpcf7-validates-as-required wpcf7-exclusive-checkbox"><span class="wpcf7-list-item first"><label><input type="checkbox" name="subject" value="Jag vill boka tid för undersökning för att teckna ett Frisktandvårdsavtal">&nbsp;<span class="wpcf7-list-item-label">Jag vill boka tid för undersökning för att teckna ett Frisktandvårdsavtal</span></label></span><span class="wpcf7-list-item last"><label><input type="checkbox" name="subject" value="Jag vill ställa en fråga om Frisktandvård">&nbsp;<span class="wpcf7-list-item-label">Jag vill ställa en fråga om Frisktandvård</span></label></span></span></span></p>
+	<p>
+	Fyll i svaret på frågan, vad blir <span class="wpcf7-form-control-wrap protection"><span class="wpcf7-quiz-label">1+4?</span>&nbsp;<input type="text" name="protection" size="40" class="wpcf7-form-control wpcf7-quiz" aria-required="true" aria-invalid="false"><input type="hidden" name="_wpcf7_quiz_answer_protection" value="a286073efe45670d9b52bc952133c07c"></span></p>
+	<p><input type="submit" value="Skicka" class="wpcf7-form-control wpcf7-submit"><img class="ajax-loader" src="http://tandavtal.se/wp-content/plugins/contact-form-7/images/ajax-loader.gif" alt="Skickar..." style="visibility: hidden;"></p>
+	<div class="wpcf7-response-output wpcf7-display-none"></div></form>
+*@

@@ -1,22 +1,24 @@
-﻿using WebApplication.Models.Forms;
+﻿using System;
 
 namespace WebApplication.Models.ViewModels
 {
-	public class HomeViewModel
+	public class HomeViewModel : IHomeViewModel
 	{
-		#region Fields
+		#region Constructors
 
-		private Form _form;
+		public HomeViewModel(IFormViewModel formViewModel)
+		{
+			if(formViewModel == null)
+				throw new ArgumentNullException(nameof(formViewModel));
+
+			this.FormViewModel = formViewModel;
+		}
 
 		#endregion
 
 		#region Properties
 
-		public virtual Form Form
-		{
-			get { return this._form ?? (this._form = new Form()); }
-			set { this._form = value; }
-		}
+		public virtual IFormViewModel FormViewModel { get; }
 
 		#endregion
 	}

@@ -1,0 +1,37 @@
+﻿@model ISystemInformation
+@if(Model != null)
+{
+	switch(Model.Type)
+	{
+		case SystemInformationType.Confirmation:
+			@:<div class="alert alert-success">
+			break;
+		case SystemInformationType.Exception:
+			@:<div class="alert alert-danger">
+			break;
+		case SystemInformationType.Warning:
+			@:<div class="alert alert-warning">
+			break;
+		default:
+			@:<div class="alert alert-info">
+			break;
+	}
+	if(!string.IsNullOrEmpty(Model.Heading))
+	{
+		<h2>@Model.Heading</h2>
+	}
+	foreach(var information in Model.Information)
+	{
+		<p>@information</p>
+	}
+	if(Model.DetailedInformation.Any())
+	{
+		@:<ul>
+		foreach(var detailedInformation in Model.DetailedInformation)
+		{
+			<li>@detailedInformation</li>
+		}
+		@:</ul>
+	}
+	@:</div>
+}

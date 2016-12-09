@@ -6,6 +6,7 @@ namespace WebApplication.Business.Web
 	{
 		#region Methods
 
+		string HtmlAttributeEncode(string value);
 		string HtmlDecode(string value);
 		string HtmlEncode(string value);
 

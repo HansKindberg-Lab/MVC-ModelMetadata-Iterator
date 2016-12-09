@@ -1,0 +1,95 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Configuration;
+
+namespace WebApplication.Business.Configuration
+{
+	public abstract class ConfigurationElementCollection<T> : ConfigurationElementCollection, IList<T> where T : ConfigurationElement, new()
+	{
+		#region Properties
+
+		public new virtual bool IsReadOnly => this.IsReadOnly();
+
+		public virtual T this[int index]
+		{
+			get { return (T) this.BaseGet(index); }
+			set
+			{
+				this.BaseRemoveAt(index);
+				this.BaseAdd(index, value);
+			}
+		}
+
+		#endregion
+
+		#region Methods
+
+		public virtual void Add(T item)
+		{
+			this.BaseAdd(item);
+		}
+
+		public virtual void Clear()
+		{
+			this.BaseClear();
+		}
+
+		public virtual bool Contains(T item)
+		{
+			return this.BaseIndexOf(item) >= 0;
+		}
+
+		public virtual void CopyTo(T[] array, int arrayIndex)
+		{
+			// ReSharper disable CoVariantArrayConversion
+			base.CopyTo(array, arrayIndex);
+			// ReSharper restore CoVariantArrayConversion
+		}
+
+		protected override ConfigurationElement CreateNewElement()
+		{
+			return new T();
+		}
+
+		public new virtual IEnumerator<T> GetEnumerator()
+		{
+			// If we implement this method like this:
+			// return this.Cast<T>().GetEnumerator();
+			// something goes wrong, eg. the test for this method craches.
+
+			// ReSharper disable LoopCanBeConvertedToQuery
+			foreach(ConfigurationElement item in (IEnumerable) this)
+			{
+				yield return (T) item;
+			}
+			// ReSharper restore LoopCanBeConvertedToQuery
+		}
+
+		public virtual int IndexOf(T item)
+		{
+			return this.BaseIndexOf(item);
+		}
+
+		public virtual void Insert(int index, T item)
+		{
+			this.BaseAdd(index, item);
+		}
+
+		public virtual bool Remove(T item)
+		{
+			if(!this.Contains(item))
+				return false;
+
+			this.BaseRemove(this.GetElementKey(item));
+
+			return true;
+		}
+
+		public virtual void RemoveAt(int index)
+		{
+			this.BaseRemoveAt(index);
+		}
+
+		#endregion
+	}
+}

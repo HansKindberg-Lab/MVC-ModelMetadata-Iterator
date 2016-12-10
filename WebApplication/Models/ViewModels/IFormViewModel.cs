@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using WebApplication.Business;
-using WebApplication.Business.Web.Html.Forms;
+using WebApplication.Business.Web.Html;
+using WebApplication.Business.Web.Mvc;
+using WebApplication.Models.Forms;
 
 namespace WebApplication.Models.ViewModels
 {
@@ -8,7 +10,9 @@ namespace WebApplication.Models.ViewModels
 	{
 		#region Properties
 
-		IEnumerable<IFormComponent> Components { get; }
+		Form Form { get; }
+		IEnumerable<IHtmlNode> HtmlNodes { get; }
+		IModelMetadata ModelMetadata { get; }
 		ISystemInformation SystemInformation { get; }
 
 		#endregion

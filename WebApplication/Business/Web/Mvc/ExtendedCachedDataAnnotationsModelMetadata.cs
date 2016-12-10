@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -37,6 +38,20 @@ namespace WebApplication.Business.Web.Mvc
 		}
 
 		IEnumerable<IModelMetadata> IModelMetadata.Properties => this.Properties.Cast<ExtendedCachedDataAnnotationsModelMetadata>();
+
+		#endregion
+
+		#region Methods
+
+		public virtual DataType? GetDataType()
+		{
+			DataType dataType;
+
+			if(Enum.TryParse(this.DataTypeName, true, out dataType))
+				return dataType;
+
+			return null;
+		}
 
 		#endregion
 	}

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using WebApplication.Business.Collections.Generic.Extensions;
 
 namespace WebApplication.Business
@@ -20,8 +21,8 @@ namespace WebApplication.Business
 				Type = type
 			};
 
-			systemInformation.DetailedInformation.AddRange(detailedInformation);
-			systemInformation.Information.AddRange(information);
+			systemInformation.DetailedInformation.AddRange(detailedInformation ?? Enumerable.Empty<string>());
+			systemInformation.Information.AddRange(information ?? Enumerable.Empty<string>());
 
 			return systemInformation;
 		}

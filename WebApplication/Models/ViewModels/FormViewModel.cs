@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using WebApplication.Business;
+using WebApplication.Business.Web;
 using WebApplication.Business.Web.Html;
 using WebApplication.Business.Web.Html.Forms;
 using WebApplication.Business.Web.Mvc;
@@ -13,7 +15,7 @@ namespace WebApplication.Models.ViewModels
 	{
 		#region Fields
 
-		private IEnumerable<IFormComponent> _components;
+		private IEnumerable<IHtmlNode> _htmlNodes;
 		private Lazy<IModelMetadata> _modelMetadata;
 		private Lazy<ISystemInformation> _systemInformation;
 
@@ -21,13 +23,16 @@ namespace WebApplication.Models.ViewModels
 
 		#region Constructors
 
-		public FormViewModel(Form form, IHtmlIdFactory htmlIdFactory, IModelMetadataProvider modelMetadataProvider, bool posted, ISystemInformationFactory systemInformationFactory, IDictionary<string, IEnumerable<string>> validationErrors)
+		public FormViewModel(Form form, IHtmlIdFactory htmlIdFactory, IHttpEncoder httpEncoder, IModelMetadataProvider modelMetadataProvider, bool posted, ISystemInformationFactory systemInformationFactory, IDictionary<string, IEnumerable<string>> validationErrors)
 		{
 			if(form == null)
 				throw new ArgumentNullException(nameof(form));
 
 			if(htmlIdFactory == null)
 				throw new ArgumentNullException(nameof(htmlIdFactory));
+
+			if(httpEncoder == null)
+				throw new ArgumentNullException(nameof(httpEncoder));
 
 			if(modelMetadataProvider == null)
 				throw new ArgumentNullException(nameof(modelMetadataProvider));
@@ -40,6 +45,7 @@ namespace WebApplication.Models.ViewModels
 
 			this.Form = form;
 			this.HtmlIdFactory = htmlIdFactory;
+			this.HttpEncoder = httpEncoder;
 			this.ModelMetadataProvider = modelMetadataProvider;
 			this.Posted = posted;
 			this.SystemInformationFactory = systemInformationFactory;
@@ -50,33 +56,47 @@ namespace WebApplication.Models.ViewModels
 
 		#region Properties
 
-		public virtual IEnumerable<IFormComponent> Components
+		public virtual Form Form { get; }
+		protected internal virtual IHtmlIdFactory HtmlIdFactory { get; }
+
+		public virtual IEnumerable<IHtmlNode> HtmlNodes
 		{
 			get
 			{
 				// ReSharper disable InvertIf
-				if(this._components == null)
+				if(this._htmlNodes == null)
 				{
-					var components = new List<IFormComponent>();
+					var htmlNodes = new List<IHtmlNode>();
 
 					foreach(var property in this.ModelMetadata.Properties.OrderBy(property => property.Order))
 					{
-						if(property == null)
-							throw new InvalidOperationException();
+						switch(property.PropertyName)
+						{
+							case "Name":
+								htmlNodes.Add(this.CreateTextInputComponent(this.Form.Name, property));
+								break;
+							case "SwedishCharactersInput":
+								htmlNodes.Add(this.CreateTextInputComponent(this.Form.SwedishCharactersInput, property));
+								break;
+							case "SwedishCharactersTextArea":
+								htmlNodes.Add(this.CreateTextInputComponent(this.Form.SwedishCharactersTextArea, property));
+								break;
+							default:
+								break;
+						}
 					}
 
-					this._components = components.ToArray();
+					this._htmlNodes = htmlNodes.ToArray();
 				}
 				// ReSharper restore InvertIf
 
-				return this._components;
+				return this._htmlNodes;
 			}
 		}
 
-		protected internal virtual Form Form { get; }
-		protected internal virtual IHtmlIdFactory HtmlIdFactory { get; }
+		protected internal virtual IHttpEncoder HttpEncoder { get; }
 
-		protected internal virtual IModelMetadata ModelMetadata
+		public virtual IModelMetadata ModelMetadata
 		{
 			get
 			{
@@ -105,12 +125,15 @@ namespace WebApplication.Models.ViewModels
 				{
 					this._systemInformation = new Lazy<ISystemInformation>(() =>
 					{
-						if(!this.Posted || !this.ValidationErrors.Any())
+						if(!this.Posted)
 							return null;
 
-						var systemInformation = this.SystemInformationFactory.CreateException("Fel", "Inmatningsfel", Enumerable.Empty<string>());
+						// ReSharper disable ConvertIfStatementToReturnStatement
+						if(this.ValidationErrors.Any())
+							return this.SystemInformationFactory.CreateException("Fel", "Inmatningsfel", this.ValidationErrors.Values.SelectMany(error => error));
+						// ReSharper restore ConvertIfStatementToReturnStatement
 
-						return systemInformation;
+						return this.SystemInformationFactory.CreateConfirmation("Bekräftelse", "Formuläret är postat.");
 					});
 				}
 
@@ -125,9 +148,23 @@ namespace WebApplication.Models.ViewModels
 
 		#region Methods
 
-		protected internal virtual IFormComponent CreateComponent()
+		protected internal virtual IFormComponent<IFormComponentInput> CreateTextInputComponent(string text, IModelMetadata modelMetadata)
 		{
-			return null;
+			if(modelMetadata == null)
+				throw new ArgumentNullException(nameof(modelMetadata));
+
+			IFormComponent<IFormComponentInput> textInputComponent;
+
+			var id = this.HtmlIdFactory.Create(modelMetadata.ContainerType.Name + modelMetadata.PropertyName);
+
+			var dataType = modelMetadata.GetDataType();
+
+			if(dataType != null && dataType.Value == DataType.MultilineText)
+				textInputComponent = new TextAreaComponent(this.HttpEncoder, id, modelMetadata.PropertyName, modelMetadata.IsRequired, text);
+			else
+				textInputComponent = new InputComponent(this.HttpEncoder, id, modelMetadata.PropertyName, modelMetadata.IsRequired, InputType.Text, text);
+
+			return textInputComponent;
 		}
 
 		#endregion

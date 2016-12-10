@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
 
@@ -45,6 +46,9 @@ namespace WebApplication.Business.Web.Mvc
 		#endregion
 
 		#region Methods
+
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+		DataType? GetDataType();
 
 		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		string GetDisplayName();

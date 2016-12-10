@@ -12,7 +12,12 @@
 
 		protected internal override ITextArea CreateInputInternal()
 		{
-			return new TextArea(this.HttpEncoder);
+			var textArea = new TextArea(this.HttpEncoder);
+
+			if(!string.IsNullOrEmpty(this.Value))
+				textArea.Children.Add(new HtmlText(this.HttpEncoder) {Value = this.Value});
+
+			return textArea;
 		}
 
 		#endregion

@@ -1,11 +1,32 @@
 ﻿@model IFormViewModel
-@Html.Partial("~/Views/Shared/SystemInformation.cshtml", Model.SystemInformation, new ViewDataDictionary())
-<form id="form" action="/#form" method="post">
-	@Html.AntiForgeryToken()
-	<div>
-		<button type="submit">Save</button>
+<div style="min-width: 200px;">
+	<div id="form" style="float: left; width: 50%;">
+		<h2>HtmlNodes</h2>
+		@Html.Partial("~/Views/Shared/SystemInformation.cshtml", Model.SystemInformation, new ViewDataDictionary())
+		<form action="#form" method="post">
+			@Html.AntiForgeryToken()
+			@foreach(var htmlNode in Model.HtmlNodes)
+			{
+				@htmlNode.ToHtmlString(3)
+			}
+			<div>
+				<button type="submit">Save</button>
+			</div>
+		</form>
+		<h2>ModelMetadata</h2>
+		@Html.Partial("~/Views/Shared/ModelMetadata.cshtml", Model.ModelMetadata)
 	</div>
-</form>
+	<div id="built-in-form" style="float: left; width: 50%;">
+		<h2>EditorFor (built-in)</h2>
+		<form action="#built-in-form" method="post">
+			@Html.AntiForgeryToken()
+			@Html.EditorFor(model => model.Form)
+			<div>
+				<button type="submit">Save</button>
+			</div>
+		</form>
+	</div>
+</div>
 @*
 	<form>
 		<div class="form-group">

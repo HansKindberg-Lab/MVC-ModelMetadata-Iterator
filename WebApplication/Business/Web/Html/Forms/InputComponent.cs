@@ -6,7 +6,7 @@ namespace WebApplication.Business.Web.Html.Forms
 	{
 		#region Constructors
 
-		public InputComponent(IHttpEncoder httpEncoder, string id, string name, bool required, InputType type, string value) : base(httpEncoder, id, name, required, value)
+		public InputComponent(string displayText, IHttpEncoder httpEncoder, string id, string name, bool required, InputType type, string value) : base(displayText, httpEncoder, id, name, required, value)
 		{
 			this.Type = type;
 		}
@@ -24,7 +24,12 @@ namespace WebApplication.Business.Web.Html.Forms
 
 		protected internal override IInput CreateInputInternal()
 		{
-			return new Input(this.HttpEncoder, this.Type);
+			var input = new Input(this.HttpEncoder, this.Type);
+
+			if(!string.IsNullOrEmpty(this.Value))
+				input.SetAttribute(HtmlAttributeKey.Value, this.Value);
+
+			return input;
 		}
 
 		#endregion

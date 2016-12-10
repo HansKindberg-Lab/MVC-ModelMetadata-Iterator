@@ -13,6 +13,7 @@
 		public const string ReadOnly = "readonly";
 		public const string Required = "required";
 		public const string Type = "type";
+		public const string Value = "value";
 
 		#endregion
 	}

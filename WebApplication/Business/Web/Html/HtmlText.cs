@@ -3,7 +3,7 @@ using System.Web;
 
 namespace WebApplication.Business.Web.Html
 {
-	public class HtmlText : BasicHtmlNode
+	public class HtmlText : BasicHtmlNode, IHtmlText
 	{
 		#region Fields
 

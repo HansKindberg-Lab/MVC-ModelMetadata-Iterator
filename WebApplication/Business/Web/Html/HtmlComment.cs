@@ -2,7 +2,7 @@
 
 namespace WebApplication.Business.Web.Html
 {
-	public class HtmlComment : BasicHtmlNode
+	public class HtmlComment : BasicHtmlNode, IHtmlComment
 	{
 		#region Properties
 

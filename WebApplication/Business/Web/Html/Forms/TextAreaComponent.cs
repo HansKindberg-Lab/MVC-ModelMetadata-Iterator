@@ -4,7 +4,7 @@
 	{
 		#region Constructors
 
-		public TextAreaComponent(IHttpEncoder httpEncoder, string id, string name, bool required, string value) : base(httpEncoder, id, name, required, value) {}
+		public TextAreaComponent(string displayText, IHttpEncoder httpEncoder, string id, string name, bool required, string value) : base(displayText, httpEncoder, id, name, required, value) {}
 
 		#endregion
 

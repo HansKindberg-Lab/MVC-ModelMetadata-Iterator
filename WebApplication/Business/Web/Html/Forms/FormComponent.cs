@@ -16,7 +16,7 @@ namespace WebApplication.Business.Web.Html.Forms
 
 		#region Constructors
 
-		protected FormComponent(IHttpEncoder httpEncoder, string id, string name, bool required, string value) : base(httpEncoder, HtmlTextWriterTag.Div)
+		protected FormComponent(string displayText, IHttpEncoder httpEncoder, string id, string name, bool required, string value) : base(httpEncoder, HtmlTextWriterTag.Div)
 		{
 			if(string.IsNullOrWhiteSpace(id))
 				throw new ArgumentException("The id cannot be null, empty or whitespace.", nameof(id));
@@ -24,6 +24,7 @@ namespace WebApplication.Business.Web.Html.Forms
 			if(string.IsNullOrWhiteSpace(name))
 				throw new ArgumentException("The name cannot be null, empty or whitespace.", nameof(name));
 
+			this.DisplayText = displayText;
 			this.Id = id;
 			this.Name = name;
 			this.Required = required;
@@ -64,6 +65,8 @@ namespace WebApplication.Business.Web.Html.Forms
 			}
 		}
 
+		protected internal virtual string DisplayText { get; }
+
 		//		return this._component;
 		//	}
 		//}
@@ -93,6 +96,9 @@ namespace WebApplication.Business.Web.Html.Forms
 					var label = new HtmlTag(this.HttpEncoder, HtmlTextWriterTag.Label);
 
 					label.Attributes.Add("for", this.Id);
+
+					if(!string.IsNullOrEmpty(this.DisplayText))
+						label.Children.Add(new HtmlText(this.HttpEncoder) {Value = this.DisplayText});
 
 					this._label = label;
 				}

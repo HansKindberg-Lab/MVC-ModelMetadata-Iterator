@@ -160,9 +160,9 @@ namespace WebApplication.Models.ViewModels
 			var dataType = modelMetadata.GetDataType();
 
 			if(dataType != null && dataType.Value == DataType.MultilineText)
-				textInputComponent = new TextAreaComponent(this.HttpEncoder, id, modelMetadata.PropertyName, modelMetadata.IsRequired, text);
+				textInputComponent = new TextAreaComponent(modelMetadata.GetDisplayName(), this.HttpEncoder, id, modelMetadata.PropertyName, modelMetadata.IsRequired, text);
 			else
-				textInputComponent = new InputComponent(this.HttpEncoder, id, modelMetadata.PropertyName, modelMetadata.IsRequired, InputType.Text, text);
+				textInputComponent = new InputComponent(modelMetadata.GetDisplayName(), this.HttpEncoder, id, modelMetadata.PropertyName, modelMetadata.IsRequired, InputType.Text, text);
 
 			return textInputComponent;
 		}

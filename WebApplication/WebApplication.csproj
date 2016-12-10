@@ -179,7 +179,9 @@
     <Compile Include="Business\Web\Html\HtmlComment.cs" />
     <Compile Include="Business\Web\Html\HtmlTag.cs" />
     <Compile Include="Business\Web\Html\IHtmlChild.cs" />
+    <Compile Include="Business\Web\Html\IHtmlComment.cs" />
     <Compile Include="Business\Web\Html\IHtmlDocumentFactory.cs" />
+    <Compile Include="Business\Web\Html\IHtmlText.cs" />
     <Compile Include="Business\Web\Html\TagRenderMode.cs" />
     <Compile Include="Business\Web\HttpEncoder.cs" />
     <Compile Include="Business\Web\IHttpEncoder.cs" />

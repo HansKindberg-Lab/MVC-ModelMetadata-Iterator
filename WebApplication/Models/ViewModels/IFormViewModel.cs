@@ -13,6 +13,7 @@ namespace WebApplication.Models.ViewModels
 		Form Form { get; }
 		IEnumerable<IHtmlNode> HtmlNodes { get; }
 		IModelMetadata ModelMetadata { get; }
+		IFormViewModelSettings Settings { get; }
 		ISystemInformation SystemInformation { get; }
 
 		#endregion

@@ -7,12 +7,32 @@ namespace WebApplication.Models.Forms
 	{
 		#region Fields
 
+		private Choices _choices;
 		private string _swedishCharactersInput;
 		private string _swedishCharactersTextArea;
 
 		#endregion
 
 		#region Properties
+
+		[Display(Name = "Val", Order = 20)]
+		[Required(ErrorMessage = "\"Val\" är obligatoriskt.")]
+		public virtual Choices Choices
+		{
+			get
+			{
+				// ReSharper disable InvertIf
+				if(this._choices != null)
+				{
+					if(!this._choices.Blue && !this._choices.Green && !this._choices.Red)
+						return null;
+				}
+				// ReSharper restore InvertIf
+
+				return this._choices;
+			}
+			set { this._choices = value; }
+		}
 
 		[AdditionalMetadata("First-key", "First-value")]
 		[AdditionalMetadata("Second-key", "Second-value")]

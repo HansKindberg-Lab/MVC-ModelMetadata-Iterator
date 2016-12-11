@@ -7,6 +7,7 @@
 		public const string Checked = "checked";
 		public const string Class = "class";
 		public const string Disabled = "disabled";
+		public const string For = "for";
 		public const string Id = "id";
 		public const string Name = "name";
 		public const string Placeholder = "placeholder";

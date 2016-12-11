@@ -204,11 +204,14 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Forms\Form.cs" />
+    <Compile Include="Models\Forms\Choices.cs" />
     <Compile Include="Models\IModelFactory.cs" />
     <Compile Include="Models\ModelFactory.cs" />
     <Compile Include="Models\ViewModels\FormViewModel.cs" />
+    <Compile Include="Models\ViewModels\FormViewModelSettings.cs" />
     <Compile Include="Models\ViewModels\HomeViewModel.cs" />
     <Compile Include="Models\ViewModels\IFormViewModel.cs" />
+    <Compile Include="Models\ViewModels\IFormViewModelSettings.cs" />
     <Compile Include="Models\ViewModels\IHomeViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
+using System.Web.UI;
 using WebApplication.Business;
 using WebApplication.Business.Web;
 using WebApplication.Business.Web.Html;
@@ -17,6 +19,7 @@ namespace WebApplication.Models.ViewModels
 
 		private IEnumerable<IHtmlNode> _htmlNodes;
 		private Lazy<IModelMetadata> _modelMetadata;
+		private IFormViewModelSettings _settings;
 		private Lazy<ISystemInformation> _systemInformation;
 
 		#endregion
@@ -70,25 +73,28 @@ namespace WebApplication.Models.ViewModels
 
 					foreach(var property in this.ModelMetadata.Properties.OrderBy(property => property.Order))
 					{
-						IFormComponent formComponent = null;
+						IHtmlNode htmlNode = null;
 
 						switch(property.PropertyName)
 						{
+							case "Choices":
+								htmlNode = this.CreateCheckBoxesComponent(this.Form.Choices, property);
+								break;
 							case "Name":
-								formComponent = this.CreateTextInputComponent(this.Form.Name, property);
+								htmlNode = this.CreateTextInputComponent(this.Form.Name, property);
 								break;
 							case "SwedishCharactersInput":
-								formComponent = this.CreateTextInputComponent(this.Form.SwedishCharactersInput, property);
+								htmlNode = this.CreateTextInputComponent(this.Form.SwedishCharactersInput, property);
 								break;
 							case "SwedishCharactersTextArea":
-								formComponent = this.CreateTextInputComponent(this.Form.SwedishCharactersTextArea, property);
+								htmlNode = this.CreateTextInputComponent(this.Form.SwedishCharactersTextArea, property);
 								break;
 							default:
 								break;
 						}
 
-						if(formComponent != null)
-							htmlNodes.Add(formComponent);
+						if(htmlNode != null)
+							htmlNodes.Add(htmlNode);
 					}
 
 					this._htmlNodes = htmlNodes.ToArray();
@@ -121,6 +127,7 @@ namespace WebApplication.Models.ViewModels
 
 		protected internal virtual IModelMetadataProvider ModelMetadataProvider { get; }
 		protected internal virtual bool Posted { get; }
+		public virtual IFormViewModelSettings Settings => this._settings ?? (this._settings = new FormViewModelSettings());
 
 		public virtual ISystemInformation SystemInformation
 		{
@@ -175,10 +182,79 @@ namespace WebApplication.Models.ViewModels
 			if(formComponent == null)
 				throw new ArgumentNullException(nameof(formComponent));
 
-			if(!this.ValidationErrors.ContainsKey(name) || formComponent.Input == null)
+			if(!this.ValidationErrors.ContainsKey(name) || formComponent.Input == null || string.IsNullOrEmpty(this.Settings.ValidationClass))
 				return;
 
-			formComponent.Input.AddClass("alert-danger");
+			formComponent.Input.AddClass(this.Settings.ValidationClass);
+		}
+
+		protected internal virtual string ConvertToString(object value)
+		{
+			return value == null ? null : Convert.ToString(value, CultureInfo.InvariantCulture);
+		}
+
+		protected internal virtual IHtmlContainer CreateCheckBoxesComponent(Choices choices, IModelMetadata modelMetadata)
+		{
+			if(modelMetadata == null)
+				throw new ArgumentNullException(nameof(modelMetadata));
+
+			var id = this.HtmlIdFactory.Create(modelMetadata.ContainerType.Name + modelMetadata.PropertyName + "Input");
+
+			var container = new HtmlTag(this.HttpEncoder, HtmlTextWriterTag.Div);
+
+			container.SetId(id);
+
+			if(!string.IsNullOrEmpty(this.Settings.CheckBoxClass))
+				container.AddClass(this.Settings.CheckBoxClass);
+
+			foreach(var property in modelMetadata.Properties)
+			{
+				var isChecked = false;
+
+				if(choices != null)
+				{
+					switch(property.PropertyName)
+					{
+						case "Blue":
+							isChecked = choices.Blue;
+							break;
+						case "Green":
+							isChecked = choices.Green;
+							break;
+						case "Red":
+							isChecked = choices.Red;
+							break;
+						default:
+							break;
+					}
+				}
+
+				id = this.HtmlIdFactory.Create(modelMetadata.ContainerType.Name + modelMetadata.PropertyName + "Checkbox" + property.PropertyName);
+
+				var checkBox = new Input(this.HttpEncoder, InputType.CheckBox);
+				checkBox.SetId(id);
+				//checkBox.SetName(modelMetadata.PropertyName);
+				//checkBox.SetAttribute(HtmlAttributeKey.Value, property.PropertyName);
+				checkBox.SetName(modelMetadata.PropertyName + "." + property.PropertyName);
+				checkBox.SetAttribute(HtmlAttributeKey.Value, true.ToString());
+
+				if(isChecked)
+					checkBox.SetAttribute(HtmlAttributeKey.Checked, HtmlAttributeKey.Checked);
+
+				container.Children.Add(checkBox);
+
+				var label = new HtmlTag(this.HttpEncoder, HtmlTextWriterTag.Label);
+				label.SetAttribute(HtmlAttributeKey.For, id);
+
+				var displayText = property.GetDisplayName();
+
+				if(!string.IsNullOrEmpty(displayText))
+					label.Children.Add(new HtmlText(this.HttpEncoder) {Value = displayText});
+
+				container.Children.Add(label);
+			}
+
+			return container;
 		}
 
 		protected internal virtual IFormComponent<IFormComponentInput> CreateTextInputComponent(string text, IModelMetadata modelMetadata)
@@ -197,6 +273,20 @@ namespace WebApplication.Models.ViewModels
 			else
 				textInputComponent = new InputComponent(modelMetadata.GetDisplayName(), this.HttpEncoder, id, modelMetadata.PropertyName, modelMetadata.IsRequired, InputType.Text, text);
 
+			if(!string.IsNullOrWhiteSpace(modelMetadata.Watermark))
+				textInputComponent.Input.SetAttribute(HtmlAttributeKey.Placeholder, modelMetadata.Watermark);
+
+			if(!string.IsNullOrEmpty(this.Settings.ComponentClass))
+				textInputComponent.AddClass(this.Settings.ComponentClass);
+
+			if(!string.IsNullOrEmpty(this.Settings.TextInputClass))
+				textInputComponent.Input.AddClass(this.Settings.TextInputClass);
+
+			foreach(var additionalValue in modelMetadata.AdditionalValues)
+			{
+				textInputComponent.Input.SetAttribute(additionalValue.Key, additionalValue.Value);
+			}
+
 			this.AddValidationClassIfNecessary(textInputComponent, modelMetadata.PropertyName);
 
 			return textInputComponent;
@@ -204,7 +294,19 @@ namespace WebApplication.Models.ViewModels
 
 		protected internal virtual string GetHtmlId(string name)
 		{
-			return this.HtmlNodes.OfType<IFormComponent>().FirstOrDefault(component => string.Equals(name, component.Name, StringComparison.OrdinalIgnoreCase))?.Id;
+			var id = this.HtmlNodes.OfType<IFormComponent>().FirstOrDefault(component => string.Equals(name, component.Name, StringComparison.OrdinalIgnoreCase))?.Id;
+
+			// ReSharper disable InvertIf
+			if(id == null)
+			{
+				var parentTag = this.HtmlNodes.OfType<IHtmlTag>().SelectMany(htmlTag => htmlTag.Children).OfType<IHtmlTag>().FirstOrDefault(htmlTag => htmlTag.Attributes.ContainsKey(HtmlAttributeKey.Name) && string.Equals(name, this.ConvertToString(htmlTag.Attributes[HtmlAttributeKey.Name]), StringComparison.OrdinalIgnoreCase))?.Parent as IHtmlTag;
+
+				if(parentTag != null && parentTag.Attributes.ContainsKey(HtmlAttributeKey.Id))
+					id = this.ConvertToString(parentTag.Attributes[HtmlAttributeKey.Id]);
+			}
+			// ReSharper restore InvertIf
+
+			return id;
 		}
 
 		#endregion

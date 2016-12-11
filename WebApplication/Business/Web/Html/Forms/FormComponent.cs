@@ -95,7 +95,7 @@ namespace WebApplication.Business.Web.Html.Forms
 				{
 					var label = new HtmlTag(this.HttpEncoder, HtmlTextWriterTag.Label);
 
-					label.Attributes.Add("for", this.Id);
+					label.SetAttribute(HtmlAttributeKey.For, this.Id);
 
 					if(!string.IsNullOrEmpty(this.DisplayText))
 						label.Children.Add(new HtmlText(this.HttpEncoder) {Value = this.DisplayText});

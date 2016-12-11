@@ -4,18 +4,22 @@
 		<h2>HtmlNodes</h2>
 		<div id="form">
 			@Html.Partial("~/Views/Shared/SystemInformation.cshtml", Model.SystemInformation, new ViewDataDictionary())
-			<form action="#form" method="post">
-				@Html.AntiForgeryToken()
-				@foreach(var htmlNode in Model.HtmlNodes)
-				{
-					@htmlNode.ToHtmlString(4)
-					@Html.Raw(Environment.NewLine)
-				}
-				<div>
-					<button type="submit">Save</button>
-				</div>
-			</form>
+			@if(Model.HtmlNodes.Any())
+			{
+				<form action="#form" method="post">
+					@Html.AntiForgeryToken()
+					@foreach(var htmlNode in Model.HtmlNodes)
+					{
+						@htmlNode.ToHtmlString(4)
+						@Html.Raw(Environment.NewLine)
+					}
+					<div>
+						<button type="submit">Save</button>
+					</div>
+				</form>
+			}
 		</div>
+		@*
 		<h2>EditorFor (built-in)</h2>
 		<div id="built-in-form">
 			<form action="#built-in-form" method="post">
@@ -26,6 +30,7 @@
 				</div>
 			</form>
 		</div>
+		*@
 	</div>
 	<div style="float: left; width: 50%;">
 		<h2>ModelMetadata</h2>

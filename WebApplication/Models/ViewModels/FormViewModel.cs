@@ -66,6 +66,17 @@ namespace WebApplication.Models.ViewModels
 		{
 			get
 			{
+				if(this.Posted && this.SystemInformation != null && this.SystemInformation.Type == SystemInformationType.Confirmation)
+					return Enumerable.Empty<IHtmlNode>();
+
+				return this.HtmlNodesInternal;
+			}
+		}
+
+		protected internal virtual IEnumerable<IHtmlNode> HtmlNodesInternal
+		{
+			get
+			{
 				// ReSharper disable InvertIf
 				if(this._htmlNodes == null)
 				{
@@ -233,8 +244,6 @@ namespace WebApplication.Models.ViewModels
 
 				var checkBox = new Input(this.HttpEncoder, InputType.CheckBox);
 				checkBox.SetId(id);
-				//checkBox.SetName(modelMetadata.PropertyName);
-				//checkBox.SetAttribute(HtmlAttributeKey.Value, property.PropertyName);
 				checkBox.SetName(modelMetadata.PropertyName + "." + property.PropertyName);
 				checkBox.SetAttribute(HtmlAttributeKey.Value, true.ToString());
 
@@ -294,12 +303,12 @@ namespace WebApplication.Models.ViewModels
 
 		protected internal virtual string GetHtmlId(string name)
 		{
-			var id = this.HtmlNodes.OfType<IFormComponent>().FirstOrDefault(component => string.Equals(name, component.Name, StringComparison.OrdinalIgnoreCase))?.Id;
+			var id = this.HtmlNodesInternal.OfType<IFormComponent>().FirstOrDefault(component => string.Equals(name, component.Name, StringComparison.OrdinalIgnoreCase))?.Id;
 
 			// ReSharper disable InvertIf
 			if(id == null)
 			{
-				var parentTag = this.HtmlNodes.OfType<IHtmlTag>().SelectMany(htmlTag => htmlTag.Children).OfType<IHtmlTag>().FirstOrDefault(htmlTag => htmlTag.Attributes.ContainsKey(HtmlAttributeKey.Name) && string.Equals(name, this.ConvertToString(htmlTag.Attributes[HtmlAttributeKey.Name]), StringComparison.OrdinalIgnoreCase))?.Parent as IHtmlTag;
+				var parentTag = this.HtmlNodesInternal.OfType<IHtmlTag>().SelectMany(htmlTag => htmlTag.Children).OfType<IHtmlTag>().FirstOrDefault(htmlTag => htmlTag.Attributes.ContainsKey(HtmlAttributeKey.Name) && this.ConvertToString(htmlTag.Attributes[HtmlAttributeKey.Name]).StartsWith(name + ".", StringComparison.OrdinalIgnoreCase))?.Parent as IHtmlTag;
 
 				if(parentTag != null && parentTag.Attributes.ContainsKey(HtmlAttributeKey.Id))
 					id = this.ConvertToString(parentTag.Attributes[HtmlAttributeKey.Id]);

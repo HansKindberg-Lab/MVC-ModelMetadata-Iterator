@@ -213,7 +213,20 @@ namespace WebApplication.Business.Web.Html
 
 				default:
 					builder.Append(">");
+
+					var onlyHtmlText = this.Children.All(child => child is IHtmlText);
+
+					if(!onlyHtmlText)
+						builder.Append(Environment.NewLine);
+
 					builder.Append(this.ChildrenToHtmlString(indentLevel + 1));
+
+					if(!onlyHtmlText)
+					{
+						builder.Append(Environment.NewLine);
+						builder.Append(tabs);
+					}
+
 					builder.Append("</");
 					builder.Append(this.TagName);
 					builder.Append(">");

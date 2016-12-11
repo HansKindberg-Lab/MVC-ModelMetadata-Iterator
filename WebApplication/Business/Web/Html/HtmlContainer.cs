@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Web;
 
 namespace WebApplication.Business.Web.Html
@@ -22,7 +23,7 @@ namespace WebApplication.Business.Web.Html
 
 		protected internal virtual IHtmlString ChildrenToHtmlString(int indentLevel)
 		{
-			var html = string.Empty;
+			var builder = new StringBuilder();
 
 			for(var i = 0; i < this.Children.Count; i++)
 			{
@@ -30,21 +31,18 @@ namespace WebApplication.Business.Web.Html
 
 				if(child is IHtmlText)
 				{
-					html += child.ToHtmlString();
+					builder.Append(child.ToHtmlString());
 				}
 				else
 				{
 					if(i > 0)
-						html += Environment.NewLine;
+						builder.Append(Environment.NewLine);
 
-					html += child.ToHtmlString(indentLevel);
+					builder.Append(child.ToHtmlString(indentLevel));
 				}
-
-				//if(i == this.Children.Count - 1)
-				//	html += Environment.NewLine;
 			}
 
-			return new HtmlString(html);
+			return new HtmlString(builder.ToString());
 		}
 
 		public override IHtmlString ToHtmlString(int indentLevel)

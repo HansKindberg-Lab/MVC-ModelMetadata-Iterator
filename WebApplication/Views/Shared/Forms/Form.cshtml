@@ -9,6 +9,7 @@
 				@foreach(var htmlNode in Model.HtmlNodes)
 				{
 					@htmlNode.ToHtmlString(4)
+					@Html.Raw(Environment.NewLine)
 				}
 				<div>
 					<button type="submit">Save</button>

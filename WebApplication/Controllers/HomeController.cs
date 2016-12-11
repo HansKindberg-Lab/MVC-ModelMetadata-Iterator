@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using WebApplication.Models;
@@ -74,7 +75,7 @@ namespace WebApplication.Controllers
 				// ReSharper disable InvertIf
 				if(this._validationErrors == null)
 				{
-					var validationErrors = new Dictionary<string, IEnumerable<string>>();
+					var validationErrors = new Dictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
 
 					if(!this.ModelState.IsValid)
 					{

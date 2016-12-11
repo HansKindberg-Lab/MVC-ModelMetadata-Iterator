@@ -70,20 +70,25 @@ namespace WebApplication.Models.ViewModels
 
 					foreach(var property in this.ModelMetadata.Properties.OrderBy(property => property.Order))
 					{
+						IFormComponent formComponent = null;
+
 						switch(property.PropertyName)
 						{
 							case "Name":
-								htmlNodes.Add(this.CreateTextInputComponent(this.Form.Name, property));
+								formComponent = this.CreateTextInputComponent(this.Form.Name, property);
 								break;
 							case "SwedishCharactersInput":
-								htmlNodes.Add(this.CreateTextInputComponent(this.Form.SwedishCharactersInput, property));
+								formComponent = this.CreateTextInputComponent(this.Form.SwedishCharactersInput, property);
 								break;
 							case "SwedishCharactersTextArea":
-								htmlNodes.Add(this.CreateTextInputComponent(this.Form.SwedishCharactersTextArea, property));
+								formComponent = this.CreateTextInputComponent(this.Form.SwedishCharactersTextArea, property);
 								break;
 							default:
 								break;
 						}
+
+						if(formComponent != null)
+							htmlNodes.Add(formComponent);
 					}
 
 					this._htmlNodes = htmlNodes.ToArray();
@@ -128,10 +133,27 @@ namespace WebApplication.Models.ViewModels
 						if(!this.Posted)
 							return null;
 
-						// ReSharper disable ConvertIfStatementToReturnStatement
+						// ReSharper disable InvertIf
 						if(this.ValidationErrors.Any())
-							return this.SystemInformationFactory.CreateException("Fel", "Inmatningsfel", this.ValidationErrors.Values.SelectMany(error => error));
-						// ReSharper restore ConvertIfStatementToReturnStatement
+						{
+							var detailedInformation = new List<string>();
+
+							foreach(var key in this.ValidationErrors.Keys)
+							{
+								var id = this.GetHtmlId(key);
+
+								foreach(var error in this.ValidationErrors[key])
+								{
+									if(!string.IsNullOrEmpty(id))
+										detailedInformation.Add("<a href=\"#" + id + "\">" + error + "</a>");
+									else
+										detailedInformation.Add(error);
+								}
+							}
+
+							return this.SystemInformationFactory.CreateException("Fel", "Inmatningsfel", detailedInformation.ToArray());
+						}
+						// ReSharper restore InvertIf
 
 						return this.SystemInformationFactory.CreateConfirmation("Bekräftelse", "Formuläret är postat.");
 					});
@@ -148,6 +170,17 @@ namespace WebApplication.Models.ViewModels
 
 		#region Methods
 
+		protected internal virtual void AddValidationClassIfNecessary(IFormComponent formComponent, string name)
+		{
+			if(formComponent == null)
+				throw new ArgumentNullException(nameof(formComponent));
+
+			if(!this.ValidationErrors.ContainsKey(name) || formComponent.Input == null)
+				return;
+
+			formComponent.Input.AddClass("alert-danger");
+		}
+
 		protected internal virtual IFormComponent<IFormComponentInput> CreateTextInputComponent(string text, IModelMetadata modelMetadata)
 		{
 			if(modelMetadata == null)
@@ -155,7 +188,7 @@ namespace WebApplication.Models.ViewModels
 
 			IFormComponent<IFormComponentInput> textInputComponent;
 
-			var id = this.HtmlIdFactory.Create(modelMetadata.ContainerType.Name + modelMetadata.PropertyName);
+			var id = this.HtmlIdFactory.Create(modelMetadata.ContainerType.Name + modelMetadata.PropertyName + "Input");
 
 			var dataType = modelMetadata.GetDataType();
 
@@ -164,7 +197,14 @@ namespace WebApplication.Models.ViewModels
 			else
 				textInputComponent = new InputComponent(modelMetadata.GetDisplayName(), this.HttpEncoder, id, modelMetadata.PropertyName, modelMetadata.IsRequired, InputType.Text, text);
 
+			this.AddValidationClassIfNecessary(textInputComponent, modelMetadata.PropertyName);
+
 			return textInputComponent;
+		}
+
+		protected internal virtual string GetHtmlId(string name)
+		{
+			return this.HtmlNodes.OfType<IFormComponent>().FirstOrDefault(component => string.Equals(name, component.Name, StringComparison.OrdinalIgnoreCase))?.Id;
 		}
 
 		#endregion

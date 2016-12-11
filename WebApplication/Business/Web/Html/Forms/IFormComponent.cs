@@ -4,8 +4,11 @@
 	{
 		#region Properties
 
+		string Id { get; }
 		IFormComponentInput Input { get; }
 		IHtmlTag Label { get; }
+		string Name { get; }
+		string Value { get; }
 
 		#endregion
 	}

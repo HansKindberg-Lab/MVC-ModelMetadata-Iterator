@@ -18,7 +18,7 @@ namespace WebApplication.Models.Forms
 		[AdditionalMetadata("Second-key", "Second-value")]
 		[Display(Name = "Ditt för- och efternamn", Order = 1, Prompt = "Skriv in ditt för- och efternamn")]
 		[Required(ErrorMessage = "\"Ditt för- och efternamn\" är obligatoriskt.")]
-		[StringLength(255)]
+		[StringLength(255, ErrorMessage = "\"Ditt för- och efternamn\" måste vara minst 5 tecken långt.", MinimumLength = 5)]
 		public virtual string Name { get; set; }
 
 		[Display(Name = "Svenska tecken (input)", Order = 10)]

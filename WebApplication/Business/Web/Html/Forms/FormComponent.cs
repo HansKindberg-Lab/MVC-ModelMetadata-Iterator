@@ -70,7 +70,7 @@ namespace WebApplication.Business.Web.Html.Forms
 		//		return this._component;
 		//	}
 		//}
-		protected internal virtual string Id { get; }
+		public virtual string Id { get; }
 		IFormComponentInput IFormComponent.Input => this.Input;
 
 		public virtual T Input
@@ -108,9 +108,9 @@ namespace WebApplication.Business.Web.Html.Forms
 			}
 		}
 
-		protected internal virtual string Name { get; }
+		public virtual string Name { get; }
 		protected internal virtual bool Required { get; }
-		protected internal virtual string Value { get; }
+		public virtual string Value { get; }
 
 		#endregion
 

@@ -29,7 +29,7 @@
 		@:<ul>
 		foreach(var detailedInformation in Model.DetailedInformation)
 		{
-			<li>@detailedInformation</li>
+			<li>@Html.Raw(detailedInformation)</li>
 		}
 		@:</ul>
 	}
